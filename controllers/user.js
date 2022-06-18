@@ -102,14 +102,12 @@ exports.getUserById = BigPromise(async (req, res, next) => {
 // update user by id
 exports.updateUserById = BigPromise(async (req, res, next) => {
   // check for name and email
-  const { name, email, role } = req.body;
-  if (!name || !email) {
-    return next(new CustomError("name and email are required", 400));
+  const {role } = req.body;
+  if (!role) {
+    return next(new CustomError("role is required", 400));
   }
 
   const newData = {
-    name,
-    email,
     role,
   };
 

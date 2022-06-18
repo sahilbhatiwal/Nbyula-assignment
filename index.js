@@ -34,9 +34,11 @@ app.get("/",(req,res)=>{
 
 // import all routes
 const user = require("./routes/user");
+const course = require("./routes/course");
 
 // router middlewares
 app.use("/api/v1", user);
+app.use("/api/v1", course);
 
 // error handler
 app.use((err,req,res,next)=>{
