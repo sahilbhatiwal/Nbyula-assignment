@@ -2,11 +2,12 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const cookieParser = require("cookie-parser");
-const passport = require("passport");
+
 const morgan = require("morgan");
 const connectWithDB = require("./utils/db");
-const { request } = require("http");
+// const { request } = require("http");
 connectWithDB();
+const CustomError = require("./utils/customError");
 
 // middlewares
 
@@ -23,30 +24,36 @@ app.use(morgan("tiny"));
 
 const PORT = process.env.PORT || '3000';
 
-// error handler
-app.use("*",(err,req,res,next)=>{
-    if(err)
-    {
-        console.log(err);
-        return res.status(500).json({
-            success:false,
-            message: err.message
-        })
-    }
-    else{
-        return res.status(404).json({
-            success:false,
-            message: "Page Not Found 💀☠️"
-        })
-    }
-})
-
 // test routes
 app.get("/",(req,res)=>{
     res.status(200).json({
         success:true,
         message: "Welcome to Quiz app"
     })
+})
+
+// import all routes
+const user = require("./routes/user");
+
+// router middlewares
+app.use("/api/v1", user);
+
+// error handler
+app.use((err,req,res,next)=>{
+    if (err instanceof CustomError) {
+      
+      console.log(err.message);
+      return res.status(err.code).json({
+        success: false,
+        message: err.message,
+      });
+    }
+
+    // check if any other error
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
 })
 
 app.listen(PORT ,()=>{
