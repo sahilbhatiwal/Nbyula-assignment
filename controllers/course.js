@@ -19,7 +19,9 @@ const getCourse = BigPromise(async (req, res, next) => {
 // get Course by id
 const getCoursebyId = BigPromise(async (req, res, next) => {
   const id = req.params.id;
-    const data = await Course.findById(id).populate("Teacher", "name email");
+    const data = await Course.findById(id)
+      .populate("Teacher", "name email")
+      .populate("Quiz", "PassingMarks");
     if (!data) {
       return next(new CustomError("Course not found", 400));
     }

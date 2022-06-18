@@ -1,5 +1,6 @@
 // import quiz model
 const quiz = require("../models/quiz");
+const CourseModel = require("../models/course");
 const BigPromise = require("../utils/bigPromise");
 const CustomError = require("../utils/customError");
 
@@ -9,6 +10,7 @@ const getquiz = BigPromise(async (req, res, next) => {
   if (!data) {
     return next(new CustomError("quiz not found", 400));
   }
+
   res.status(200).json({
     success: true,
     data: data,
@@ -18,9 +20,12 @@ const getquiz = BigPromise(async (req, res, next) => {
 // get quiz by id
 const getquizbyId = BigPromise(async (req, res, next) => {
   const id = req.params.id;
-  const data = await quiz.findById(id).populate("Teacher", "name email");
+  const data = await quiz
+    .findById(id)
+    .populate("Questions", "Question Options  Point");
+    
   if (!data) {
-    return next(new CustomError("quiz not found", 400));
+    return next(new CustomError("quiz not found", 400))
   }
 
   res.status(200).json({
@@ -34,7 +39,9 @@ const updatequizbyId = BigPromise(async (req, res, next) => {
   const id = req.params.id;
   const {PassingMarks, TopicTags } = req.body;
 
-  const data = await quiz.findByIdAndUpdate(id, {PassingMarks, TopicTags});
+  const data = await quiz
+    .findByIdAndUpdate(id, { PassingMarks, TopicTags });
+    
   if (!data) {
     return next(new CustomError("Id Does not exist", 400));
   }
@@ -65,12 +72,22 @@ const addquiz = BigPromise(async (req, res, next) => {
   // get quizdetail form body
   const { Course,PassingMarks, TopicTags } = req.body;
   if (!Course || !PassingMarks) {
-    return next(new CustomError("Course, questions and passing marks are required", 400));
+    return next(new CustomError("Course and passing marks are required", 400));
+  }
+
+  // check if course exists
+  const course = await CourseModel.findById(Course);
+  if (!course) {
+    return next(new CustomError("Course does not exist", 400));
   }
 
   const data = await quiz.create({
-    Course, Questions, PassingMarks, TopicTags
+    Course, PassingMarks, TopicTags
   });
+
+  course.Quiz= data._id;
+  await course.save();
+  
   res.status(200).json({
     success: true,
     message: "quiz added",

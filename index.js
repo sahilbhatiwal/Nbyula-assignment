@@ -35,15 +35,18 @@ app.get("/",(req,res)=>{
 // import all routes
 const user = require("./routes/user");
 const course = require("./routes/course");
+const quiz = require("./routes/quiz");
+const question = require("./routes/question");
 
 // router middlewares
 app.use("/api/v1", user);
 app.use("/api/v1", course);
+app.use("/api/v1", quiz);
+app.use("/api/v1", question);
 
 // error handler
 app.use((err,req,res,next)=>{
     if (err instanceof CustomError) {
-      
       console.log(err.message);
       return res.status(err.code).json({
         success: false,
