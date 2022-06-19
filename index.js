@@ -37,12 +37,14 @@ const user = require("./routes/user");
 const course = require("./routes/course");
 const quiz = require("./routes/quiz");
 const question = require("./routes/question");
+const quizAttempt = require("./routes/quizAttempt");
 
 // router middlewares
 app.use("/api/v1", user);
 app.use("/api/v1", course);
 app.use("/api/v1", quiz);
 app.use("/api/v1", question);
+app.use("/api/v1", quizAttempt);
 
 // error handler
 app.use((err,req,res,next)=>{
