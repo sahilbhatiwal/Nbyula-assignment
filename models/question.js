@@ -33,7 +33,7 @@ const QuestionSchema= new mongoose.Schema({
         required: [true, "Point is required"],
         min: [0, "Point should be greater than 0"],
         max : [10, "Point should be less than 100"],
-    }
+    },
 });
 
 module.exports = mongoose.model("Question", QuestionSchema);

@@ -56,11 +56,17 @@ exports.updateQuestionbyId = BigPromise(async (req, res, next) => {
 exports.deleteQuestionbyId = BigPromise(async(req, res, next) => {
     const id = req.params.id;
     var data = await QuestionModel.findByIdAndDelete(id);
+    // remove the question from the quiz
+    const quiz = await QuizModel.findById(data.Quiz);
+
+    quiz.Questions=quiz.Questions.filter(question => question != id);
+    await quiz.save();
+    // var data =quiz;
+
     if (data) {
         return res.status(200).json({
             success: true,
             message: "Question deleted",
-            data: data,
         });
     } else {
         return next(new CustomError("Id Does not exist", 400));

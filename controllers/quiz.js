@@ -37,10 +37,10 @@ const getquizbyId = BigPromise(async (req, res, next) => {
 // update quiz by id
 const updatequizbyId = BigPromise(async (req, res, next) => {
   const id = req.params.id;
-  const {PassingMarks, TopicTags } = req.body;
+  const {PassingMarks, TopicTags, MaxTime } = req.body;
 
   const data = await quiz
-    .findByIdAndUpdate(id, { PassingMarks, TopicTags });
+    .findByIdAndUpdate(id, { PassingMarks, TopicTags, MaxTime });
     
   if (!data) {
     return next(new CustomError("Id Does not exist", 400));
@@ -70,7 +70,7 @@ const deletequizbyId = BigPromise(async (req, res, next) => {
 // add a quiz
 const addquiz = BigPromise(async (req, res, next) => {
   // get quizdetail form body
-  const { Course,PassingMarks, TopicTags } = req.body;
+  const { Course,PassingMarks, TopicTags, MaxTime } = req.body;
   if (!Course || !PassingMarks) {
     return next(new CustomError("Course and passing marks are required", 400));
   }
@@ -82,7 +82,7 @@ const addquiz = BigPromise(async (req, res, next) => {
   }
 
   const data = await quiz.create({
-    Course, PassingMarks, TopicTags
+    Course, PassingMarks, TopicTags, MaxTime
   });
 
   course.Quiz= data._id;
